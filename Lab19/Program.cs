@@ -6,6 +6,18 @@ using System.Threading.Tasks;
 
 namespace Lab19
 {
+    class Computer
+    {
+        public float Code { get; set; }
+        public string Mark { get; set; }
+        public string CPU { get; set; }
+        public double FreqProc { get; set; }
+        public int RAM { get; set; }
+        public int HDD { get; set; }
+        public int VRAM { get; set; }
+        public int Price { get; set; }
+        public int Count { get; set; }
+    }
     static class Program
     {
         static void Main(string[] args)
@@ -22,49 +34,61 @@ namespace Lab19
                 new Computer(){Code=2548624,Mark="Intel",CPU="Intel",FreqProc=4.0,RAM=8192,HDD=1000,VRAM=4096,Price=720,Count=2},
                 new Computer(){Code=2548624,Mark="Avalon",CPU="AMD",FreqProc=1.5,RAM=4096,HDD=370,VRAM=2048,Price=395,Count=21},
                 new Computer(){Code=2548624,Mark="Intel",CPU="Intel",FreqProc=3.8,RAM=2048,HDD=250,VRAM=1024,Price=435,Count=17}
-            };            
+            };
+
             Console.Write("Введите CPU:");
             string CPU = Console.ReadLine();
             Console.Write("Введите RAM:");
             int RAM = Convert.ToInt32(Console.ReadLine());
+            //Определение по определенному процесору и по объему ОУЗ
             List<Computer> COMP = computers
                 .Where(c => c.RAM > RAM)
                 .Where(c => c.CPU == CPU)
                 .ToList();
             Console.WriteLine();
-            List<Computer> comp = computers
+
+            //Сортировка по увелечению цены
+            List<Computer> comp0 = computers
                 .OrderBy(c => c.Price)
-                .OrderBy(c => c.CPU)
                 .ToList();
-            foreach (Computer c in comp)
+            foreach (Computer c in comp0)
                 Console.WriteLine($" Code:{c.Code}\n Mark:{c.Mark}\n CPU:{c.CPU}\n FreqProc:{c.FreqProc} HZ\n RAM:{c.RAM} MB\n HDD:{c.HDD} TB\n VRAM:{c.VRAM} MB\n Price:{c.Price} y.e\n Count:{c.Count} шт.\n");
-            //var comp = computers
-            //    .Select(c => new
-            //    {
-            //        min = c.Price
-            //    }).Min();
-            //foreach (var c in computers)
-            //{
-            //    Console.WriteLine($"{c.Price}");
-            //}  
-            //int min = computers.Min(c => c.Price);
-            //int max = computers.Max(c => c.Price);
-            //Console.WriteLine($"{min}");
-            //Console.WriteLine(max);
+            Console.WriteLine();
+
+            //Групипировка по типу Процессоров. P.s Подсмотрел на docs.MS ^_^
+            var comp2 = computers
+                .GroupBy(com => (com.CPU)
+                , (cpu, count) => new
+                {
+                    CPU = cpu,
+                    Count = count.Count(),
+                });
+            foreach (var result in comp2)
+            {
+                Console.WriteLine("\nCPU: " + result.CPU);
+                Console.WriteLine("Колличество: " + result.Count);
+            }
+            Console.WriteLine();
+
+            //Минимальная цена
+            var comp = computers
+                .Min(c => c.Price);
+            Console.WriteLine($"Min Computer's Price : {comp} y.e.");
+            Console.WriteLine();
+
+            //Максимальная цена
+            var comp1 = computers
+                .Max(c => c.Price);
+            Console.WriteLine($"Max Computer's Price : {comp1} y.e.");
+            Console.WriteLine();
+
+            //Есть ли хотя бы один компьютер в количестве не менее 30 штук?
+            var comp3 = computers
+                .Any(c => c.Count > 30);
+            bool YoN = comp3;
+            Console.WriteLine("В списке {0} компов больше 30 шт.", YoN ? "есть" : "нет");
+
             Console.ReadKey();
         }
-    }
-    class Computer
-    {
-        public float Code { get; set; }
-        public string Mark { get; set; }
-        public string CPU { get; set; }
-        public double FreqProc { get; set; }
-        public int RAM { get; set; }
-        public int HDD { get; set; }
-        public int VRAM { get; set; }
-        public int Price { get; set; }
-        public int Count { get; set; }
-
     }
 }
